@@ -26,6 +26,7 @@ def get_todo_lists():
             'title': row[1],
             'description': row[2],
             'url': row[3],
+            'userId': row[4]
         }
         todo_lists.append(todo_list)
     return jsonify(todo_lists)
@@ -76,6 +77,54 @@ def delete_todo_list(id):
 
     return jsonify({'message': 'created'})
 
+
+@app.route('/login', methods=['GET'])
+def get_login():
+    sql = '''
+    SELECT * FROM login;
+    '''
+    result = connection.execute(sql)
+    todo_lists = []
+    for row in result:
+        todo_list = {
+            'id': row[0],
+            'email': row[1],
+            'password': row[2]
+        }
+        todo_lists.append(todo_list)
+    return jsonify(todo_lists)
+
+@app.route('/login', methods=['POST'])
+def post_login():
+
+    sql = '''
+    SELECT ID
+    FROM login;
+    '''
+    result = connection.execute(sql)
+    key = []
+    for row in result:
+        key.append(row[0])
+    new_key = 1
+    while True:
+        if new_key not in key:
+            break
+        new_key += 1
+    content = request.get_json()
+
+    try:
+        sql = '''
+        INSERT INTO login (ID, email, password)
+        VALUES
+        (%(ID)s, %(email)s, %(password)s);
+        '''
+        connection.execute(sql,{'ID': new_key, 'email': content["email"], 'password': content["password"]})
+    except Exception:
+        connection.rollback()
+    else:
+        connection.commit()
+
+    return jsonify({'message': 'created'})
 
 # @app.route('/impressions', methods=['GET'])
 # def get_impressions():
