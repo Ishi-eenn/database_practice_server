@@ -51,11 +51,11 @@ def post_todo_list():
 
     try:
         sql = '''
-        INSERT INTO 本棚 (ID, タイトル, 内容, リンク)
+        INSERT INTO 本棚 (ID, タイトル, 内容, リンク, ユーザー)
         VALUES
-        (%(ID)s, %(title)s, %(description)s, %(url)s);
+        (%(ID)s, %(title)s, %(description)s, %(url)s, %(userId)s);
         '''
-        connection.execute(sql,{'ID': new_key, 'title': content["title"], 'description': content["description"], 'url': content["url"]})
+        connection.execute(sql,{'ID': new_key, 'title': content["title"], 'description': content["description"], 'url': content["url"], 'userId': content["userId"]})
     except Exception:
         connection.rollback()
     else:
